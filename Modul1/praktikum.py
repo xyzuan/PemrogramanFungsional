@@ -26,8 +26,8 @@ db_book = {
         'user': 'null'
     },
     2: {
-        'title': 'Alhamdullilah Ya Allah',
-        'author': 'Krisno',
+        'title': 'Infotech 2023',
+        'author': 'Labit',
         'category': 'Religi',
         'available': True,
         'user': 'null'
