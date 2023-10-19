@@ -27,17 +27,18 @@ def printBoardPreview(width, height, start_position, goal_position):
         print(' '.join(row))
 
 
+# isWin =  lambda pos, goal_position : ( pos == goal_position )
 def isWin(pos, goal_position): return (pos == goal_position)
-# def isWin(pos, goal_position): return (pos == goal_position)
 
 
 def playGame(width, height, start_position, goal_position):
-
     board = createBoard(width, height)
     board[start_position[0]][start_position[1]] = 'A'
     board[goal_position[0]][goal_position[1]] = 'O'
 
     current_position = start_position
+    invalid_move_count = 0
+
     while not isWin(current_position, goal_position):
         print("Current board:")
         for row in board:
@@ -64,6 +65,11 @@ def playGame(width, height, start_position, goal_position):
                 current_position = new_position
             else:
                 print("Your move is not valid")
+                invalid_move_count += 1
+
+            if invalid_move_count >= 3:
+                print("You made 3 invalid moves. You lose!")
+                return
 
     print("You win!")
 
