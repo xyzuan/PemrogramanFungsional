@@ -1,4 +1,4 @@
-from collections import defaultdict
+from functools import reduce
 
 movies = [
     {"title": "Avengers: Endgame", "year": 2019, "rating": 8.4, "genre": "Action"},
@@ -19,12 +19,18 @@ def getGenreCount(movies, genre):
     return genre, len(list(genre_movies))
 
 def getAverageByYear(movies, year):
-    ratings = [movie["rating"] for movie in movies if movie["year"] == year]
-    if len(ratings) > 0:
-        avg_rating = sum(ratings) / len(ratings)
+    def reducer(acc, movie):
+        if movie["year"] == year:
+            acc[0] += 1
+            acc[1] += movie["rating"]
+        return acc
+
+    total_count, total_rating = reduce(reducer, movies, [0, 0])
+    if total_count > 0:
+        avg_rating = total_rating / total_count
         return year, avg_rating
     else:
-        return year, 0  
+        return year, 0
 
 def getHigherRate(movies):
     if not movies:
@@ -33,12 +39,12 @@ def getHigherRate(movies):
     return higherRate
 
 def getMovieByTitle(movies, title):
-    found_movies = [movie for movie in movies if movie["title"].lower() == title.lower()]
-    return found_movies
+    matching_movies = [movie for movie in movies if movie["title"].lower() == title.lower()]
+    return matching_movies
 
 def getMovie(movies):
-    title_to_search = input("Masukkan judul film yang ingin dicari: ")
-    matching_movies = getMovieByTitle(movies, title_to_search)
+    search = input("Masukkan judul film yang ingin dicari: ").lower()
+    matching_movies = getMovieByTitle(movies, search)
 
     if matching_movies:
         for movie in matching_movies:
@@ -65,12 +71,8 @@ def main():
             for genre, count in genreCounts.items():
                 print(f"Jumlah Film Genre '{genre}': {count}")
         elif choose == 2:
-            averageRatingYear = {}
-            for movie in movies:
-                year = movie["year"]
-                if year not in averageRatingYear:
-                    averageRatingYear[year] = getAverageByYear(movies, year)
-            for year, avg_rating in averageRatingYear.items():
+            averageRatings = dict(map(lambda year: getAverageByYear(movies, year), set(movie["year"] for movie in movies)))
+            for year, avg_rating in averageRatings.items():
                 print(f"Rata-rata rating untuk tahun {year}: {avg_rating}")
         elif choose == 3:
             higherRate = getHigherRate(movies)
